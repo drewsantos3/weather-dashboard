@@ -1,110 +1,124 @@
-// global variables including API key
-const form = document.querySelector(".form");
-const forecastCard = document.querySelector(".forecast");
-const citySearch = JSON.parse(localStorage.getItem("city")) || [];
-const cityInput = document.querySelector("#cityInput");
-const searchButton = document.querySelector("#searchButton");
-const currentWeather = document.querySelector(".current-weather");
-const savedCities = document.querySelector("#saved-cities");
-const APIkey = "e0c073679a9efdb1f66a406e344f3085";
-const baseURL = "https://api.openweathermap.org";
+// global variables
+const searchBtn = document.querySelector("#search-btn");
 
-// function to retrieve weather from api and catch invalid input
-function getResponse(search) {
-  let apiURL = `${baseURL}/geo/1.0/direct?q=${search}&appid=${APIkey}`;
-  fetch(apiURL).then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      if (!data[0]) {
-        alert("try a different city");
-      } else {
-        apiResponse(data[0]);
-      };
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
-};
-// function for current weather card
-function weatherCard(city, weather) {
-  let pic = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
-  let date = dayjs().format("M/D/YYYY");
-  let card = document.createElement("div");
-  let header = document.createElement("h2");
-  let bg = document.createElement("div");
-  let weatherIcon = document.createElement("img");
-  let windEl = document.createElement("p");
-  let humidityEl = document.createElement("p");
-  let tempEl = document.createElement("p");
-  let temp = weather.main.temp;
-  let windspeed = weather.wind.speed;
-  let humidity = weather.main.humidity;
-  currentWeather.append(card);
-  card.append(bg);
-  header.textContent = `${city}(${date})`;
-  header.append(weatherIcon);
-  humidityEl.textContent = `Humidity level: ${humidity} Percent`;
-  windEl.textContent = `Wind Speed: ${windspeed} Mph`;
-  tempEl.textContent = `Temperature: ${temp} F°`;
-  weatherIcon.setAttribute("src", pic);
-  bg.append(header, weatherIcon, tempEl, windEl, humidityEl);
-};
-// five Day Forecast function
-function forecast(forecastData) {
-  forecastData.forEach((day) => {
-    let currentDate = day.dt_txt.split(" ")[1];
-    // get current date for selected city and append
-    if (currentDate === "00:00:00") {
-      const date = dayjs(day.dt_txt).format("M/D/YYYY");
-      const dayDiv = document.createElement("div");
-      const iconURL = `https://openweathermap.org/img/w/${day.weather[0].icon}.png`;
-      dayDiv.innerHTML += `<div><div>${date}</div><div>${day.main.temp}</div><div>${day.wind.speed}</div><div>${day.main.humidity}</div> <img src="${iconURL}"></div>`;
-      forecastCard.append(dayDiv);
-    };
-  });
-};
-// render function calls
-function render(city, data) {
-  weatherCard(city, data.list[0], data.city.timezone);
-  forecast(data.list);
-};
+const searchInput = document.querySelector("#search-input");
+const cityDiv = document.querySelector("#city-div");
+const currentWeather = document.querySelector("#current-div");
+const forecastDiv = document.querySelector("#forecast-div");
+const asideSaved = document.querySelector("#saved-cities");
+let citiesArray = JSON.parse(localStorage.getItem("Cities")) || [];
 
-function apiResponse(location) {
-  let { lat, lon } = location;
-  let city = location.name;
-  let apiURL = `${baseURL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${APIkey}`;
-  fetch(apiURL).then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      render(city, data);
-    });
-};
-// save search into local storage
-function handleForm(event) {
-  forecastCard.innerHTML = "";
-  currentWeather.innerHTML = "";
-  let city = event.target.getAttribute("data-city") || cityInput.value;
-  if (!citySearch.includes(city) && city !== "") {
-    citySearch.push(city);
-    localStorage.setItem("city", JSON.stringify(citySearch));
-  };
-  event.preventDefault();
-  const search = city.trim();
-  getResponse(search);
-  cityInput.value = "";
-};
-// init function
+// functions
 function init() {
-  citySearch.forEach((city) => {
-    savedCities.innerHTML += `<button data-city="${city}">${city}</button>`;
-  });
-};
+let count = 0;
+  citiesArray.forEach((object) => {
+    if (count < 10) {
+      let pastCity = document.createElement("div");
+      if (object.city.split(" ").length > 1) {
+        let newString = "";
+        for (let i = 0; i < object.city.split(" ").length; i++) {
+          newString += object.city.split(" ")[i][0].toUpperCase() + object.city.split(" ")[i].toLowerCase().slice(1);
+          newString += " ";
+        }
+        pastCity.innerHTML = newString.trim();
+      } else {
+        pastCity.innerHTML = object.city[0].toUpperCase() + object.city.toLowerCase().slice(1);
+      }
 
-// function calls and event listeners
+      asideSaved.append(pastCity);
+      count++;
+      pastCity.classList.add("past-styling");
+      pastCity.addEventListener("click", pastSearch);
+    }
+  });
+}
+
+function getWeather(city) {
+  forecastDiv.classList.remove("hidden");
+  currentWeather.classList.remove("hidden");
+  cityDiv.classList.remove("hidden");
+  let currentDayUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=517f19dc586407c39701b016a6edf914&units=imperial`;
+  
+  fetch(currentDayUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      currentWeather.innerHTML = "";
+      let date = dayjs().format("M/D/YYYY");
+      let currentDay = document.createElement("div");
+      currentDay.innerHTML += `<h2>${data.name} (${date})</h2>`;
+      currentDay.innerHTML += `<img src="https://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">`;
+      currentDay.innerHTML += `<p>Temperature: ${data.main.temp} °F</p>`;
+      currentDay.innerHTML += `<p>Humidity: ${data.main.humidity}%</p>`;
+      currentDay.innerHTML += `<p>Wind Speed: ${data.wind.speed} MPH</p>`;
+      if (data.weather[0].main === "Rain") {
+        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-danger">Dangerous</span></p>`;
+      }
+      if (data.weather[0].main === "Clouds") {
+        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-warning">Moderate</span></p>`;
+      }
+      if (data.weather[0].main === "Clear") {
+        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
+      }
+      currentWeather.append(currentDay);
+
+      let requestUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=1216c6d8b1f2b30f4fcbb22eb9353470&units=imperial`;
+      fetch(requestUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          cityDiv.innerHTML = "";
+          let fiveDay = document.createElement("div");
+          fiveDay.innerHTML += `<h2>5-Day Forecast:</h2>`;
+          fiveDay.classList.add("row");
+          data.list.forEach((object) => {
+            let time = object.dt_txt.split(" ")[1];
+            let date = dayjs(object.dt_txt.split(" ")[0]).format("M/D/YYYY");
+            if (time === "12:00:00") {
+              let day = document.createElement("div");
+              day.classList.add("col");
+              day.innerHTML += `<h3>${date}</h3>`;
+              day.innerHTML += `<img src="https://openweathermap.org/img/w/${object.weather[0].icon}.png" alt="weather icon">`;
+              day.innerHTML += `<p>Temperature: ${object.main.temp} °F</p>`;
+              day.innerHTML += `<p>Humidity: ${object.main.humidity}%</p>`;
+              day.innerHTML += `<p>Wind Speed: ${object.wind.speed} MPH</p>`;
+              if (object.weather[0].main === "Rain") {
+                day.innerHTML += `<p>UV Index: <span class="badge badge-danger">Dangerous</span></p>`;
+              }
+              if (object.weather[0].main === "Clouds") {
+                day.innerHTML += `<p>UV Index: <span class="badge badge-warning">Moderate</span></p>`;
+              }
+              if (object.weather[0].main === "Clear") {
+                day.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
+              }
+              fiveDay.append(day);
+            }
+          }
+          );
+          cityDiv.append(fiveDay);
+        });
+    });
+}
+
+function pastSearch(event) {
+  let city = event.target.innerHTML;
+  getWeather(city);
+}
+
+function search() {
+  let city = searchInput.value;
+  getWeather(city);
+  let cityObject = {
+    city: city,
+  };
+  citiesArray.unshift(cityObject);
+  localStorage.setItem("Cities", JSON.stringify(citiesArray));
+}
+
 init();
-// search button
-form.addEventListener("submit", handleForm);
-// saved city buttons
-savedCities.addEventListener("click", handleForm);
+searchBtn.addEventListener("click", search);
+
+
+
+
+
+      
+
