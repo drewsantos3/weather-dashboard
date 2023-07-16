@@ -11,7 +11,7 @@
 </head>
 <body class="body">
     <header class="bg-gradient-to-r from-cyan-500 to-blue-500 text-stone-50 text-center text-5xl p-4">Drew's Weather App</header>
-
+<div class="container mx-auto">
     <div class="flex justify-center">
         <div class="w-1/2">
             <div class="flex justify-center p-5">
@@ -22,14 +22,15 @@
     </div>
 
     <aside id="saved-cities" class="inline-block flex-col">
-        <h2 id="past-searches">Past Searches</h2>
+        <h2 id="past-searches" class="font-bold">Past Searches</h2>
     </aside>
 
-    <section class="inline-block flex-row">
+    <section id="content" class="inline-block">
         <div id="current-div" class="flex items-center justify-center hidden px-5 mb-3">Current Forecast</div>
         <h1 id="forecast-div" class="flex items-center justify-center text-white text-center text-3xl p-4 font-bold hidden">5-Day Forecast</h1>
         <div id="city-div" class="flex flex-row m-2 p-3 hidden"></div>
     </section>
+</div>
 </body>
 
 <script src="./assets/script.js"></script>

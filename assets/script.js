@@ -46,7 +46,7 @@ function getWeather(city) {
       let date = dayjs().format("M/D/YYYY");
       let currentDay = document.createElement("div");
       currentDay.innerHTML += `<h2>${data.name} (${date})</h2>`;
-      currentDay.innerHTML += `<img src="https://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">`;
+      currentDay.innerHTML += `<img class="mx-auto" src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="weather icon">`;
       currentDay.innerHTML += `<p>Temperature: ${data.main.temp} °F</p>`;
       currentDay.innerHTML += `<p>Humidity: ${data.main.humidity}%</p>`;
       currentDay.innerHTML += `<p>Wind Speed: ${data.wind.speed} MPH</p>`;
@@ -59,24 +59,22 @@ function getWeather(city) {
       if (data.weather[0].main === "Clear") {
         currentDay.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
       }
+      currentDay.classList.add("current-div");
       currentWeather.append(currentDay);
+    });
 
       let requestUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=1216c6d8b1f2b30f4fcbb22eb9353470&units=imperial`;
       fetch(requestUrl)
         .then((response) => response.json())
         .then((data) => {
           cityDiv.innerHTML = "";
-          let fiveDay = document.createElement("div");
-          fiveDay.innerHTML += `<h2>5-Day Forecast:</h2>`;
-          fiveDay.classList.add("row");
           data.list.forEach((object) => {
             let time = object.dt_txt.split(" ")[1];
             let date = dayjs(object.dt_txt.split(" ")[0]).format("M/D/YYYY");
             if (time === "12:00:00") {
               let day = document.createElement("div");
-              day.classList.add("col");
               day.innerHTML += `<h3>${date}</h3>`;
-              day.innerHTML += `<img src="https://openweathermap.org/img/w/${object.weather[0].icon}.png" alt="weather icon">`;
+              day.innerHTML += `<img class="mx-auto" src="https://openweathermap.org/img/wn/${object.weather[0].icon}@2x.png" alt="weather icon">`;
               day.innerHTML += `<p>Temperature: ${object.main.temp} °F</p>`;
               day.innerHTML += `<p>Humidity: ${object.main.humidity}%</p>`;
               day.innerHTML += `<p>Wind Speed: ${object.wind.speed} MPH</p>`;
@@ -89,14 +87,14 @@ function getWeather(city) {
               if (object.weather[0].main === "Clear") {
                 day.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
               }
-              fiveDay.append(day);
+              day.classList.add("city-div");
+              cityDiv.append(day);
             }
           }
           );
-          cityDiv.append(fiveDay);
         });
-    });
-}
+    };
+
 
 function pastSearch(event) {
   let city = event.target.innerHTML;

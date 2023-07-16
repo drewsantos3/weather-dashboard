@@ -1,1 +1,96 @@
-#past-searches {}
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap');
+
+.body {
+    background: url('./assets/img/sky.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+header {
+    font-family: 'Quicksand' , sans-serif;
+}
+
+.container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.past-styling {
+    text-align: center;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+ .past-styling:hover {
+    background-color: #ebebeb;
+    cursor: pointer;
+ }
+
+#past-searches { 
+    text-align: center;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+.current-div {
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: lightgray;
+    padding: 0 100px;
+    padding-bottom: 15px;
+    margin: 15px 2px 2px 2px;
+}
+
+.city-div {
+    text-align:center;
+    border: 2.5px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    background-color: lightgray;
+}
+
+#content {
+    align-content: center;
+    padding-left: 2rem;
+    background-color: lightgray;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+@media screen and (max-width: 768px) {
+    #content {
+        padding-left: 0;
+        overflow: auto;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .current-div {
+        padding: 0;
+    }
+}
+    
+@media screen and (max-width: 768px) {
+    .city-div {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .past-styling {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #past-searches {
+        padding: 0;
+    }
+}
+
