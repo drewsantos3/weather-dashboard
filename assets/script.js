@@ -7,6 +7,7 @@ const currentWeather = document.querySelector("#current-div");
 const forecastDiv = document.querySelector("#forecast-div");
 const asideSaved = document.querySelector("#saved-cities");
 let citiesArray = JSON.parse(localStorage.getItem("Cities")) || [];
+let body = document.querySelector("body");
 
 // functions
 function init() {
@@ -51,13 +52,25 @@ function getWeather(city) {
       currentDay.innerHTML += `<p>Humidity: ${data.main.humidity}%</p>`;
       currentDay.innerHTML += `<p>Wind Speed: ${data.wind.speed} MPH</p>`;
       if (data.weather[0].main === "Rain") {
-        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-danger">Dangerous</span></p>`;
+        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
+        body.classList.add("rain");
+        body.classList.remove("clouds");
+        body.classList.remove("clear");
+        body.classList.remove("body");
       }
       if (data.weather[0].main === "Clouds") {
         currentDay.innerHTML += `<p>UV Index: <span class="badge badge-warning">Moderate</span></p>`;
+        body.classList.add("clouds");
+        body.classList.remove("rain");
+        body.classList.remove("clear");
+        body.classList.remove("body");
       }
       if (data.weather[0].main === "Clear") {
-        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-success">Favorable</span></p>`;
+        currentDay.innerHTML += `<p>UV Index: <span class="badge badge-danger">Dangerous</span></p>`;
+        body.classList.add("clear");
+        body.classList.remove("clouds");
+        body.classList.remove("rain");
+        body.classList.remove("body");
       }
       currentDay.classList.add("current-div");
       currentWeather.append(currentDay);
