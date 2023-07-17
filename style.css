@@ -21,6 +21,10 @@
     background-size: cover;
 }
 
+#forecast-div {
+    font-family: 'Quicksand', sans-serif;
+}
+
 
 header {
     font-family: 'Quicksand', sans-serif;
@@ -82,7 +86,7 @@ header {
 footer {
     font-family: 'Quicksand', sans-serif;
     text-align: right;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
